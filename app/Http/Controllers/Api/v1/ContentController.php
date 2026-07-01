@@ -9,6 +9,7 @@ use App\Models\Faq;
 use App\Models\Gallery;
 use App\Models\ServiceHour;
 use App\Models\Page;
+use App\Models\Podcast;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
@@ -198,5 +199,18 @@ class ContentController extends Controller
                 ], 500);
             }
         }
+    }
+
+    /**
+     * Get published podcasts.
+     */
+    public function podcasts()
+    {
+        $podcasts = Podcast::whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->orderBy('published_at', 'desc')
+            ->paginate(10);
+
+        return response()->json($podcasts);
     }
 }

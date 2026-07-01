@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Reservation;
 use App\Models\Desiderata;
 use App\Models\Survey;
+use App\Models\Clearance;
+use App\Models\Membership;
 use Illuminate\Http\Request;
 use Illuminate\Database\QueryException;
 
@@ -117,6 +119,64 @@ class TransactionController extends Controller
         return response()->json([
             'message' => 'Terima kasih! Survei kepuasan Anda berhasil disimpan.',
             'data' => $survey
+        ], 201);
+    }
+
+    /**
+     * Submit a new Clearance (Bebas Pustaka) request with PDF thesis file.
+     */
+    public function submitClearance(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'nim_nidn' => 'required|string|max:100',
+            'program_studi' => 'required|string|max:255',
+            'phone' => 'required|string|max:50',
+            'thesis_file' => 'required|file|mimes:pdf|max:10240', // PDF only, max 10MB
+        ]);
+
+        // Secure file upload: randomize filename and store in storage/app/public/uploads/thesis
+        if ($request->hasFile('thesis_file')) {
+            $path = $request->file('thesis_file')->store('uploads/thesis', 'public');
+            $validated['thesis_file'] = $path;
+        }
+
+        $clearance = Clearance::create(array_merge($validated, ['status' => 'pending']));
+
+        return response()->json([
+            'message' => 'Pengajuan Bebas Pustaka Anda berhasil dikirim dan sedang dalam peninjauan.',
+            'data' => $clearance
+        ], 201);
+    }
+
+    /**
+     * Submit a new Membership (Anggota Online) registration with profile photo.
+     */
+    public function submitMembership(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'nim_nip' => 'required|string|max:100|unique:memberships,nim_nip',
+            'member_type' => 'required|in:mahasiswa,dosen,staff,umum',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:50',
+            'photo' => 'required|image|mimes:jpeg,png,jpg|max:2048', // Image only, max 2MB
+        ]);
+
+        // Secure file upload: randomize photo path and store in storage/app/public/uploads/photos
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('uploads/photos', 'public');
+            $validated['photo_path'] = $path;
+        }
+
+        // Unset temporary photo request key
+        unset($validated['photo']);
+
+        $membership = Membership::create(array_merge($validated, ['status' => 'pending']));
+
+        return response()->json([
+            'message' => 'Registrasi anggota k-online berhasil dikirim. Silakan tunggu verifikasi admin.',
+            'data' => $membership
         ], 201);
     }
 }

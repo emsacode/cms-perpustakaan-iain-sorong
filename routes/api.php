@@ -32,6 +32,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/service-hours', [ContentController::class, 'serviceHours']);
         Route::get('/pages', [ContentController::class, 'pages']);
         Route::get('/pages/{slug}', [ContentController::class, 'pageDetail']);
+        Route::get('/podcasts', [ContentController::class, 'podcasts']);
     });
 
     // Transaction & Feedback submissions (throttled to 5 requests/minute)
@@ -39,5 +40,7 @@ Route::prefix('v1')->group(function () {
         Route::post('/reservations', [TransactionController::class, 'reserveRoom']);
         Route::post('/desiderata', [TransactionController::class, 'submitDesiderata']);
         Route::post('/surveys', [TransactionController::class, 'submitSurvey']);
+        Route::post('/clearances', [TransactionController::class, 'submitClearance']);
+        Route::post('/memberships', [TransactionController::class, 'submitMembership']);
     });
 });

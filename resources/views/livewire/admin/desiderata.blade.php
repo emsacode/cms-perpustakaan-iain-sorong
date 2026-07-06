@@ -2,7 +2,7 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
-            <h1 class="text-2xl font-bold tracking-tight text-foreground">Usulan Buku (Desiderata)</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-foreground">Usulan Buku</h1>
             <p class="text-xs text-muted-foreground mt-1">Kelola usulan pengadaan buku baru yang diajukan oleh dosen, mahasiswa, dan civitas akademika.</p>
         </div>
     </div>

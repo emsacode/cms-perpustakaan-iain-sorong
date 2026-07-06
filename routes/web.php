@@ -8,7 +8,6 @@ use App\Livewire\Admin\Desiderata;
 use App\Livewire\Admin\Surveys;
 use App\Livewire\Admin\Pages;
 use App\Livewire\Admin\Clearances;
-use App\Livewire\Admin\Memberships;
 use App\Livewire\Admin\Podcasts;
 use App\Livewire\Admin\Analytics;
 use App\Livewire\Admin\Login;
@@ -35,7 +34,6 @@ Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/surveys', Surveys::class)->name('admin.surveys');
     Route::get('/pages', Pages::class)->name('admin.pages');
     Route::get('/clearances', Clearances::class)->name('admin.clearances');
-    Route::get('/memberships', Memberships::class)->name('admin.memberships');
     Route::get('/podcasts', Podcasts::class)->name('admin.podcasts');
     Route::get('/analytics', Analytics::class)->name('admin.analytics');
 

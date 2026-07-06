@@ -143,18 +143,11 @@
                                     <button wire:click="rejectReservation({{ $item['id'] }})" class="px-2.5 py-1 bg-destructive text-white rounded text-[11px] font-semibold hover:bg-destructive/95 transition-colors">
                                         Tolak
                                     </button>
-                                @elseif($item['type'] === 'clearance')
+                                @else
                                     <button wire:click="approveClearance({{ $item['id'] }})" class="px-2.5 py-1 bg-emerald-500 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
                                         Setujui
                                     </button>
                                     <button wire:click="rejectClearance({{ $item['id'] }})" class="px-2.5 py-1 bg-destructive text-white rounded text-[11px] font-semibold hover:bg-destructive/95 transition-colors">
-                                        Tolak
-                                    </button>
-                                @else
-                                    <button wire:click="activateMembership({{ $item['id'] }})" class="px-2.5 py-1 bg-emerald-500 text-white rounded text-[11px] font-semibold hover:bg-emerald-600 transition-colors">
-                                        Aktifkan
-                                    </button>
-                                    <button wire:click="rejectMembership({{ $item['id'] }})" class="px-2.5 py-1 bg-destructive text-white rounded text-[11px] font-semibold hover:bg-destructive/95 transition-colors">
                                         Tolak
                                     </button>
                                 @endif

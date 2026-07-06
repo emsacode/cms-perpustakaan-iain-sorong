@@ -6,7 +6,6 @@ use App\Models\Article;
 use App\Models\User;
 use App\Models\Reservation;
 use App\Models\Clearance;
-use App\Models\Membership;
 use App\Models\Desiderata;
 use App\Models\Survey;
 use Livewire\Component;
@@ -110,17 +109,7 @@ class Dashboard extends Component
         session()->flash('message', 'Pengajuan bebas pustaka telah ditolak.');
     }
 
-    public function activateMembership($id)
-    {
-        Membership::where('id', $id)->update(['status' => 'active', 'updated_at' => now()]);
-        session()->flash('message', 'Kartu anggota online berhasil diaktifkan.');
-    }
 
-    public function rejectMembership($id)
-    {
-        Membership::where('id', $id)->update(['status' => 'rejected', 'updated_at' => now()]);
-        session()->flash('message', 'Registrasi kartu anggota telah ditolak.');
-    }
 
     public function render()
     {
@@ -131,7 +120,6 @@ class Dashboard extends Component
         // Interactive services stats
         $pendingReservations = Reservation::where('status', 'pending')->count();
         $pendingClearances = Clearance::where('status', 'pending')->count();
-        $pendingMemberships = Membership::where('status', 'pending')->count();
         $totalDesiderata = Desiderata::count();
         
         // IKM calculation
@@ -182,20 +170,7 @@ class Dashboard extends Component
                 ]);
             });
 
-        // 3. Add pending memberships
-        Membership::where('status', 'pending')
-            ->get()
-            ->each(function($item) use ($queue) {
-                $queue->push([
-                    'id' => $item->id,
-                    'type' => 'membership',
-                    'title' => 'Registrasi Anggota: ' . ucfirst($item->member_type),
-                    'user' => $item->name . ' (' . $item->nim_nip . ')',
-                    'meta' => 'Email: ' . $item->email . ' • WA: ' . $item->phone,
-                    'link_surat' => null,
-                    'created_at' => $item->created_at,
-                ]);
-            });
+
 
         // Sort by created_at ascending (oldest pending items first) so staff processes in order of entry
         $inboxQueue = $queue->sortBy('created_at')->values()->all();
@@ -210,7 +185,6 @@ class Dashboard extends Component
             'popularArticles' => $popularArticles,
             'pendingReservations' => $pendingReservations,
             'pendingClearances' => $pendingClearances,
-            'pendingMemberships' => $pendingMemberships,
             'totalDesiderata' => $totalDesiderata,
             'averageIkm' => $averageIkm,
             'inboxQueue' => $inboxQueue,

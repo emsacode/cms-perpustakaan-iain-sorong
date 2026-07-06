@@ -41,6 +41,5 @@ Route::prefix('v1')->group(function () {
         Route::post('/desiderata', [TransactionController::class, 'submitDesiderata']);
         Route::post('/surveys', [TransactionController::class, 'submitSurvey']);
         Route::post('/clearances', [TransactionController::class, 'submitClearance']);
-        Route::post('/memberships', [TransactionController::class, 'submitMembership']);
     });
 });

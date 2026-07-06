@@ -241,30 +241,7 @@
         @endif
     </a>
 
-    <!-- Anggota Online Link -->
-    @php 
-        $isMemberships = request()->is('admin/memberships*') || request()->routeIs('admin.memberships*');
-        $pendingMemberships = \App\Models\Membership::where('status', 'pending')->count();
-    @endphp
-    <a href="{{ route('admin.memberships') }}" 
-       class="flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium transition-colors relative {{ $isMemberships ? 'bg-secondary text-secondary-foreground font-semibold' : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground' }}">
-        <div class="flex items-center gap-3">
-            @if($isMemberships)
-                <span class="absolute left-0 top-1/4 bottom-1/4 w-0.5 bg-primary rounded-r"></span>
-            @endif
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-contact">
-                <path d="M17 18a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2"/>
-                <rect width="18" height="18" x="3" y="4" rx="2"/>
-                <circle cx="12" cy="10" r="3"/>
-            </svg>
-            <span>Anggota Online</span>
-        </div>
-        @if($pendingMemberships > 0)
-            <span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-destructive text-destructive-foreground animate-pulse">
-                {{ $pendingMemberships }}
-            </span>
-        @endif
-    </a>
+
 
     <!-- Indeks Kepuasan (Survei IKM) Link -->
     @php 

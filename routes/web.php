@@ -23,6 +23,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/articles', Articles::class)->name('admin.articles');
     Route::get('/users', Users::class)->name('admin.users');
     Route::get('/reservations', Reservations::class)->name('admin.reservations');
+    Route::get('/reservations/{id}', \App\Livewire\Admin\ReservationDetail::class)->name('admin.reservations.detail');
+    Route::post('/reservations/{id}/status', [\App\Http\Controllers\AdminController::class, 'updateReservationStatus']);
     Route::get('/desiderata', Desiderata::class)->name('admin.desiderata');
     Route::get('/surveys', Surveys::class)->name('admin.surveys');
     Route::get('/pages', Pages::class)->name('admin.pages');

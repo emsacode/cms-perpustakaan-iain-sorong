@@ -5,7 +5,6 @@ namespace App\Livewire\Admin;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
-use App\Models\SdgsTag;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -15,7 +14,7 @@ class Articles extends Component
     use WithPagination;
 
     // URL Query string parameters
-    public $action = ''; // '', 'create', 'categories', 'tags', 'sdgs'
+    public $action = ''; // '', 'create', 'categories', 'tags'
     public $search = '';
     public $statusTab = 'all';
     public $dateFilter = '';
@@ -45,7 +44,6 @@ class Articles extends Component
     public $quickDate = '';
     public $quickStatus = '';
     public $quickCategories = [];
-    public $quickSdgs = [];
 
     // Full Edit / Create state
     public $isEditing = false;
@@ -59,7 +57,6 @@ class Articles extends Component
     public $editViewsCount = 0;
     public $editCategories = [];
     public $editTags = ''; // comma-separated
-    public $editSdgs = [];
     public $editPublishedAt = '';
 
     // Taxonomy Manager state
@@ -172,7 +169,6 @@ class Articles extends Component
         // Sync relationships
         $newArt->categories()->sync($art->categories->pluck('id')->toArray());
         $newArt->tags()->sync($art->tags->pluck('id')->toArray());
-        $newArt->sdgsTags()->sync($art->sdgsTags->pluck('id')->toArray());
 
         session()->flash('message', 'Artikel berhasil diduplikat sebagai Draf.');
     }
@@ -186,9 +182,9 @@ class Articles extends Component
     {
         return response()->streamDownload(function () {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['ID', 'Judul', 'Slug', 'Penulis', 'Kategori', 'SDGs Tag', 'Status', 'Views', 'SEO', 'Keterbacaan', 'Tanggal Terbit']);
+            fputcsv($handle, ['ID', 'Judul', 'Slug', 'Penulis', 'Kategori', 'Status', 'Views', 'SEO', 'Keterbacaan', 'Tanggal Terbit']);
 
-            $articles = Article::with(['user', 'categories', 'sdgsTags'])
+            $articles = Article::with(['user', 'categories'])
                 ->when(!empty($this->selectedArticles), function($q) {
                     $q->whereIn('id', $this->selectedArticles);
                 })->get();
@@ -200,7 +196,6 @@ class Articles extends Component
                     $art->slug,
                     $art->user->name ?? 'Admin',
                     $art->categories->pluck('name')->join(', '),
-                    $art->sdgsTags->pluck('name')->join(', '),
                     $art->status,
                     $art->views_count,
                     $art->seo_score,
@@ -217,14 +212,13 @@ class Articles extends Component
     // Quick Edit Methods
     public function openQuickEdit($id)
     {
-        $art = Article::with(['categories', 'sdgsTags'])->findOrFail($id);
+        $art = Article::with(['categories'])->findOrFail($id);
         $this->quickEditId = $id;
         $this->quickTitle = $art->title;
         $this->quickSlug = $art->slug;
         $this->quickDate = $art->published_at ? date('Y-m-d\TH:i', strtotime($art->published_at)) : '';
         $this->quickStatus = $art->status;
         $this->quickCategories = $art->categories->pluck('id')->map(fn($id) => (string)$id)->toArray();
-        $this->quickSdgs = $art->sdgsTags->pluck('id')->map(fn($id) => (string)$id)->toArray();
     }
 
     public function closeQuickEdit()
@@ -248,7 +242,6 @@ class Articles extends Component
         $art->save();
 
         $art->categories()->sync($this->quickCategories);
-        $art->sdgsTags()->sync($this->quickSdgs);
 
         $this->quickEditId = null;
         session()->flash('message', 'Artikel berhasil diperbarui via Edit Cepat.');
@@ -259,7 +252,7 @@ class Articles extends Component
     {
         $this->isEditing = true;
         if ($id) {
-            $art = Article::with(['categories', 'tags', 'sdgsTags'])->findOrFail($id);
+            $art = Article::with(['categories', 'tags'])->findOrFail($id);
             $this->editingId = $id;
             $this->editTitle = $art->title;
             $this->editSlug = $art->slug;
@@ -270,7 +263,6 @@ class Articles extends Component
             $this->editViewsCount = $art->views_count;
             $this->editCategories = $art->categories->pluck('id')->map(fn($id) => (string)$id)->toArray();
             $this->editTags = $art->tags->pluck('name')->join(', ');
-            $this->editSdgs = $art->sdgsTags->pluck('id')->map(fn($id) => (string)$id)->toArray();
             $this->editPublishedAt = $art->published_at ? date('Y-m-d\TH:i', strtotime($art->published_at)) : '';
         } else {
             $this->editingId = null;
@@ -283,7 +275,6 @@ class Articles extends Component
             $this->editViewsCount = 0;
             $this->editCategories = [];
             $this->editTags = '';
-            $this->editSdgs = [];
             $this->editPublishedAt = '';
         }
     }
@@ -337,9 +328,6 @@ class Articles extends Component
             }
         }
         $art->tags()->sync($tagIds);
-
-        // Sync SDGs Tags
-        $art->sdgsTags()->sync($this->editSdgs);
 
         $this->closeEdit();
         session()->flash('message', $this->editingId ? 'Artikel berhasil diperbarui.' : 'Artikel baru berhasil dibuat.');
@@ -409,13 +397,6 @@ class Articles extends Component
             ])->layout('layouts.app');
         }
 
-        if ($this->action === 'sdgs') {
-            $sdgs = SdgsTag::withCount('articles')->orderBy('id', 'asc')->paginate(20);
-            return view('livewire.admin.articles-sdgs', [
-                'sdgs' => $sdgs
-            ])->layout('layouts.app');
-        }
-
         // 2. Fetch sidebar stats
         $counts = [
             'all' => Article::count(),
@@ -435,10 +416,9 @@ class Articles extends Component
 
         // 4. Categories list
         $categoriesList = Category::orderBy('name', 'asc')->get();
-        $sdgsList = SdgsTag::orderBy('name', 'asc')->get();
 
         // 5. Query Articles
-        $articles = Article::with(['user', 'categories', 'sdgsTags'])
+        $articles = Article::with(['user', 'categories'])
             ->when($this->statusTab !== 'all', function ($q) {
                 if ($this->statusTab === 'mine') {
                     $q->where('user_id', auth()->id() ?: 1);
@@ -474,7 +454,6 @@ class Articles extends Component
             'counts' => $counts,
             'availableDates' => $availableDates,
             'categoriesList' => $categoriesList,
-            'sdgsList' => $sdgsList,
         ])->layout('layouts.app');
     }
 }

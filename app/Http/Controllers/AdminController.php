@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ReservationStatusMail;
 
 class AdminController extends Controller
 {
@@ -53,11 +55,40 @@ class AdminController extends Controller
     public function updateReservationStatus(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:pending,approved,rejected,completed',
+            'status' => 'required|in:pending,approved,rejected,key_picked_up,returned,overdue,cancelled',
+            'rejection_reason' => 'required_if:status,rejected|nullable|string|max:1000',
+            'notes_inventory' => 'nullable|string|max:1000',
         ]);
 
         $reservation = Reservation::findOrFail($id);
-        $reservation->update(['status' => $request->status]);
+        
+        $updateData = ['status' => $request->status];
+
+        if ($request->status === 'rejected') {
+            $updateData['rejection_reason'] = $request->rejection_reason;
+        } elseif ($request->status === 'key_picked_up') {
+            $updateData['picked_up_at'] = now();
+            if ($request->filled('notes_inventory')) {
+                $updateData['notes_inventory'] = $request->notes_inventory;
+            }
+        } elseif ($request->status === 'returned') {
+            $updateData['returned_at'] = now();
+            if ($request->filled('notes_inventory')) {
+                $updateData['notes_inventory'] = $request->notes_inventory;
+            }
+        }
+
+        $reservation->update($updateData);
+
+        // Kirim email notifikasi secara otomatis untuk status approved & rejected
+        if (in_array($request->status, ['approved', 'rejected'])) {
+            try {
+                Mail::to($reservation->email)->send(new ReservationStatusMail($reservation));
+            } catch (\Exception $e) {
+                // Tetap biarkan transaksi berhasil di lokal jika konfigurasi SMTP belum siap, tapi catat errornya
+                logger()->error('Gagal mengirim email reservasi: ' . $e->getMessage());
+            }
+        }
 
         return redirect()->back()->with('success', 'Status reservasi berhasil diperbarui.');
     }

@@ -44,15 +44,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // 5. SDGs Tags Table
-        Schema::create('sdgs_tags', function (Blueprint $table) {
-            $table->id();
-            $table->string('name', 100); // e.g. "SDGs 4"
-            $table->string('slug', 100)->unique();
-            $table->timestamps();
-        });
-
-        // 6. Pivot: article_category
+        // 5. Pivot: article_category
         Schema::create('article_category', function (Blueprint $table) {
             $table->id();
             $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
@@ -60,20 +52,12 @@ return new class extends Migration
             $table->unique(['article_id', 'category_id']);
         });
 
-        // 7. Pivot: article_tag
+        // 6. Pivot: article_tag
         Schema::create('article_tag', function (Blueprint $table) {
             $table->id();
             $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
             $table->foreignId('tag_id')->constrained('tags')->onDelete('cascade');
             $table->unique(['article_id', 'tag_id']);
-        });
-
-        // 8. Pivot: article_sdgs_tag
-        Schema::create('article_sdgs_tag', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('article_id')->constrained('articles')->onDelete('cascade');
-            $table->foreignId('sdgs_tag_id')->constrained('sdgs_tags')->onDelete('cascade');
-            $table->unique(['article_id', 'sdgs_tag_id']);
         });
     }
 
@@ -82,10 +66,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('article_sdgs_tag');
         Schema::dropIfExists('article_tag');
         Schema::dropIfExists('article_category');
-        Schema::dropIfExists('sdgs_tags');
         Schema::dropIfExists('tags');
         Schema::dropIfExists('categories');
         Schema::dropIfExists('articles');

@@ -15,3 +15,8 @@ Artisan::command('inspire', function () {
 Schedule::job(new HarvestEprintsJob)->daily();
 Schedule::job(new HarvestSlimsJob)->daily();
 Schedule::job(new HarvestOjsJob)->daily();
+
+// Cancel reservations that haven't picked up key after 15 minutes of session start
+Schedule::call(function () {
+    \App\Models\Reservation::checkAndCancelExpiredReservations();
+})->everyTenMinutes();

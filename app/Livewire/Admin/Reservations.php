@@ -2,7 +2,7 @@
 
 namespace App\Livewire\Admin;
 
-use Illuminate\Support\Facades\DB;
+use App\Models\Reservation;
 use Livewire\Component;
 use Livewire\WithPagination;
 
@@ -28,28 +28,18 @@ class Reservations extends Component
         $this->resetPage();
     }
 
-    public function updateStatus($id, $newStatus)
-    {
-        if (in_array($newStatus, ['pending', 'approved', 'rejected', 'completed'])) {
-            DB::table('reservations')
-                ->where('id', $id)
-                ->update([
-                    'status' => $newStatus,
-                    'updated_at' => now()
-                ]);
-            session()->flash('message', 'Status reservasi berhasil diperbarui.');
-        }
-    }
-
     public function deleteReservation($id)
     {
-        DB::table('reservations')->where('id', $id)->delete();
+        Reservation::findOrFail($id)->delete();
         session()->flash('message', 'Reservasi berhasil dihapus.');
     }
 
     public function render()
     {
-        $query = DB::table('reservations');
+        // Jalankan pembatalan otomatis untuk pengajuan yang melewati batas toleransi 15 menit
+        Reservation::checkAndCancelExpiredReservations();
+
+        $query = Reservation::query();
 
         if (!empty($this->search)) {
             $query->where(function($q) {

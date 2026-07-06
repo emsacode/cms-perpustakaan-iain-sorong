@@ -31,8 +31,5 @@ class Article extends Model
         return $this->belongsToMany(Tag::class, 'article_tag');
     }
 
-    public function sdgsTags()
-    {
-        return $this->belongsToMany(SdgsTag::class, 'article_sdgs_tag', 'article_id', 'sdgs_tag_id');
-    }
+
 }

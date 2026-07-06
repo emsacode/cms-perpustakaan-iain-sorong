@@ -3,7 +3,7 @@
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
         <div>
             <h1 class="text-2xl font-bold tracking-tight text-foreground">Reservasi Ruangan</h1>
-            <p class="text-xs text-muted-foreground mt-1">Setujui, tolak, atau selesaikan pengajuan peminjaman ruangan diskusi dan home theater oleh pemustaka.</p>
+            <p class="text-xs text-muted-foreground mt-1">Kelola permohonan peminjaman ruangan, serah terima kunci, inventaris alat, serta audit transaksi peminjaman.</p>
         </div>
     </div>
 
@@ -32,10 +32,13 @@
         <select wire:model.live="statusFilter" 
                 class="px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring min-w-[150px]">
             <option value="">Semua Status</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-            <option value="completed">Completed</option>
+            <option value="pending">Pending (Menunggu)</option>
+            <option value="approved">Approved (Disetujui)</option>
+            <option value="key_picked_up">Kunci Diambil</option>
+            <option value="returned">Kunci Dikembalikan</option>
+            <option value="rejected">Rejected (Ditolak)</option>
+            <option value="overdue">Terlambat</option>
+            <option value="cancelled">Dibatalkan</option>
         </select>
     </div>
 
@@ -79,56 +82,54 @@
                             <td class="p-4">
                                 @if($res->status === 'pending')
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
-                                        Pending
+                                        Menunggu Persetujuan
                                     </span>
                                 @elseif($res->status === 'approved')
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
-                                        Approved
+                                        Disetujui
+                                    </span>
+                                @elseif($res->status === 'key_picked_up')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">
+                                        Kunci Diambil
+                                    </span>
+                                @elseif($res->status === 'returned')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
+                                        Kunci Dikembalikan
+                                    </span>
+                                @elseif($res->status === 'overdue')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                                        Terlambat
+                                    </span>
+                                @elseif($res->status === 'cancelled')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-500/10 text-slate-600 dark:text-slate-400 border border-slate-500/20">
+                                        Dibatalkan
                                     </span>
                                 @elseif($res->status === 'completed')
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                                        Completed
+                                        Selesai
                                     </span>
                                 @else
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-destructive/10 text-destructive border border-destructive/20">
-                                        Rejected
+                                        Ditolak
                                     </span>
                                 @endif
                             </td>
-                            <td class="p-4 text-right">
-                                <div class="flex items-center justify-end gap-2" x-data="{ open: false }">
-                                    @if($res->status === 'pending')
-                                        <button wire:click="updateStatus({{ $res->id }}, 'approved')" 
-                                                title="Setujui"
-                                                class="p-1 rounded-md hover:bg-muted text-emerald-600 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check">
-                                                <polyline points="20 6 9 17 4 12"/>
-                                            </svg>
-                                        </button>
-                                        <button wire:click="updateStatus({{ $res->id }}, 'rejected')" 
-                                                title="Tolak"
-                                                class="p-1 rounded-md hover:bg-muted text-destructive transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x">
-                                                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                            </svg>
-                                        </button>
-                                    @endif
-
-                                    @if($res->status === 'approved')
-                                        <button wire:click="updateStatus({{ $res->id }}, 'completed')" 
-                                                title="Selesaikan"
-                                                class="p-1 rounded-md hover:bg-muted text-blue-600 transition-colors">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive">
-                                                <polyline points="21 8 21 21 3 21 3 8"/><rect width="22" height="5" x="1" y="3"/><line x1="10" y1="12" x2="14" y2="12"/>
-                                            </svg>
-                                        </button>
-                                    @endif
+                            <td class="p-4 text-right border-l-0">
+                                <div class="flex items-center justify-end gap-2">
+                                    <a href="{{ route('admin.reservations.detail', $res->id) }}" 
+                                       class="inline-flex items-center justify-center px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-secondary text-secondary-foreground border border-border hover:bg-accent transition-colors gap-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-eye">
+                                            <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        Lihat Detail
+                                    </a>
 
                                     <button wire:click="deleteReservation({{ $res->id }})" 
                                             wire:confirm="Apakah Anda yakin ingin menghapus data reservasi ini?"
                                             title="Hapus"
-                                            class="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-destructive transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2">
+                                            class="p-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-destructive transition-colors cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash-2">
                                             <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/>
                                         </svg>
                                     </button>

@@ -82,18 +82,7 @@
                             </div>
                         </div>
 
-                        <!-- SDGs Tags (Checkboxes) -->
-                        <div class="space-y-2">
-                            <label class="text-xs font-semibold text-muted-foreground block">Keterkaitan SDGs</label>
-                            <div class="max-h-[150px] overflow-y-auto border border-border bg-background rounded-lg p-3 space-y-2">
-                                @foreach($sdgsList as $sdg)
-                                    <label class="flex items-center gap-2 text-xs text-foreground cursor-pointer" title="{{ $sdg->name }}">
-                                        <input type="checkbox" wire:model="editSdgs" value="{{ $sdg->id }}" class="rounded border-border text-primary focus:ring-ring">
-                                        <span class="truncate">{{ $sdg->name }}</span>
-                                    </label>
-                                @endforeach
-                            </div>
-                        </div>
+
 
                         <!-- Free text tags -->
                         <div class="space-y-2">
@@ -145,7 +134,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
                 <div>
                     <h1 class="text-2xl font-bold tracking-tight text-foreground">Semua Pos Berita</h1>
-                    <p class="text-xs text-muted-foreground mt-1">Kelola artikel berita, pengumuman, kategori, serta relasi SDGs perpustakaan.</p>
+                    <p class="text-xs text-muted-foreground mt-1">Kelola artikel berita, pengumuman, dan kategori perpustakaan.</p>
                 </div>
                 <div class="flex items-center gap-2.5">
                     <button wire:click="exportCsv" class="inline-flex items-center justify-center px-3 py-2 text-xs font-semibold rounded-lg bg-secondary text-secondary-foreground border border-border hover:bg-accent transition-colors">
@@ -246,7 +235,6 @@
                                 <th class="p-4 text-xs font-semibold uppercase tracking-wider">Judul Berita</th>
                                 <th class="p-4 text-xs font-semibold uppercase tracking-wider">Penulis</th>
                                 <th class="p-4 text-xs font-semibold uppercase tracking-wider">Kategori</th>
-                                <th class="p-4 text-xs font-semibold uppercase tracking-wider">SDGs Tag</th>
                                 <th class="p-4 text-xs font-semibold uppercase tracking-wider">Tanggal & Status</th>
                                 <th class="p-4 text-xs font-semibold uppercase tracking-wider text-right">Views</th>
                             </tr>
@@ -256,7 +244,7 @@
                                 @if($quickEditId === $a->id)
                                     <!-- Inline Quick Edit Row -->
                                     <tr class="bg-muted/50 border-y-2 border-indigo-500/20">
-                                        <td colspan="7" class="p-5">
+                                        <td colspan="6" class="p-5">
                                             <div class="space-y-4">
                                                 <h4 class="text-xs font-bold text-foreground uppercase tracking-wider">Edit Cepat Pos</h4>
                                                 
@@ -277,7 +265,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     <!-- Status -->
                                                     <div class="space-y-1.5">
                                                         <label class="text-[10px] font-semibold text-muted-foreground uppercase">Status</label>
@@ -297,19 +285,6 @@
                                                                 <label class="flex items-center gap-1.5 text-[11px] text-foreground cursor-pointer">
                                                                     <input type="checkbox" wire:model="quickCategories" value="{{ $cat->id }}" class="rounded scale-90 border-border text-primary focus:ring-ring">
                                                                     <span>{{ $cat->name }}</span>
-                                                                </label>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- SDGs checkboxes options -->
-                                                    <div class="space-y-1.5">
-                                                        <label class="text-[10px] font-semibold text-muted-foreground uppercase">SDGs</label>
-                                                        <div class="max-h-[100px] overflow-y-auto border border-border bg-background rounded p-2 space-y-1">
-                                                            @foreach($sdgsList as $sdg)
-                                                                <label class="flex items-center gap-1.5 text-[11px] text-foreground cursor-pointer">
-                                                                    <input type="checkbox" wire:model="quickSdgs" value="{{ $sdg->id }}" class="rounded scale-90 border-border text-primary focus:ring-ring">
-                                                                    <span class="truncate">{{ $sdg->name }}</span>
                                                                 </label>
                                                             @endforeach
                                                         </div>
@@ -390,18 +365,7 @@
                                             </div>
                                         </td>
 
-                                        <!-- SDGs Tags list -->
-                                        <td class="p-4 align-top text-xs">
-                                            <div class="flex flex-wrap gap-1">
-                                                @forelse($a->sdgsTags as $s)
-                                                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 font-semibold" title="{{ $s->name }}">
-                                                        {{ explode(':', $s->name)[0] }}
-                                                    </span>
-                                                @empty
-                                                    <span class="text-muted-foreground text-[10px]">—</span>
-                                                @endforelse
-                                            </div>
-                                        </td>
+
 
                                         <!-- Date & Time -->
                                         <td class="p-4 align-top text-xs text-muted-foreground">

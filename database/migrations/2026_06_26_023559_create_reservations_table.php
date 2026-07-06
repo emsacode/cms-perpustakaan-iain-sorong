@@ -19,8 +19,12 @@ return new class extends Migration
             $table->string('room_name', 255);
             $table->date('booking_date');
             $table->string('session_time', 255);
-            $table->enum('status', ['pending', 'approved', 'rejected', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected', 'key_picked_up', 'returned', 'overdue', 'cancelled'])->default('pending');
             $table->string('link_surat')->nullable(); // Reference/Request letter URL
+            $table->timestamp('picked_up_at')->nullable();
+            $table->timestamp('returned_at')->nullable();
+            $table->text('notes_inventory')->nullable();
+            $table->text('rejection_reason')->nullable();
             $table->timestamps();
 
             // Composite unique index untuk mengunci pencegahan double-booking di level database

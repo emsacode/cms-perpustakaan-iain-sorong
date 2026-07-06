@@ -71,19 +71,8 @@ class DatabaseSeeder extends Seeder
             $tagIds[$t['slug']] = $tagObj->id;
         }
 
-        $sdgsTags = [
-            ['name' => 'SDGs 4: Pendidikan Berkualitas', 'slug' => 'sdgs-4'],
-            ['name' => 'SDGs 9: Industri, Inovasi, & Infrastruktur', 'slug' => 'sdgs-9'],
-            ['name' => 'SDGs 17: Kemitraan untuk Mencapai Tujuan', 'slug' => 'sdgs-17'],
-        ];
-        $sdgsIds = [];
-        foreach ($sdgsTags as $s) {
-            $sObj = \App\Models\SdgsTag::updateOrCreate(['slug' => $s['slug']], ['name' => $s['name']]);
-            $sdgsIds[$s['slug']] = $sObj->id;
-        }
-
         // 3. Create Dummy Articles
-        $articles = [
+                $articles = [
             [
                 'title' => 'Tips Menghindari Plagiarisme dalam Penulisan Skripsi',
                 'content' => 'Plagiarisme adalah hal fatal dalam dunia akademik. Tulisan ini menjelaskan cara menulis kutipan dan memparafrase kalimat secara legal.',
@@ -93,8 +82,7 @@ class DatabaseSeeder extends Seeder
                 'readability_score' => 'good',
                 'published_at' => now()->subDays(5),
                 'cats' => ['news-update', 'layanan'],
-                'tags_list' => ['skripsi', 'literasi'],
-                'sdgs' => ['sdgs-4']
+                'tags_list' => ['skripsi', 'literasi']
             ],
             [
                 'title' => 'Fasilitas Baru Ruang Home Theater UPT Perpustakaan',
@@ -105,8 +93,7 @@ class DatabaseSeeder extends Seeder
                 'readability_score' => 'ok',
                 'published_at' => now()->subDays(4),
                 'cats' => ['news-update', 'layanan'],
-                'tags_list' => ['perpustakaan'],
-                'sdgs' => ['sdgs-9']
+                'tags_list' => ['perpustakaan']
             ],
             [
                 'title' => 'Jam Layanan Ramadhan 1447 H UPT Perpustakaan IAIN Sorong',
@@ -117,8 +104,7 @@ class DatabaseSeeder extends Seeder
                 'readability_score' => 'good',
                 'published_at' => now()->subDays(3),
                 'cats' => ['news-update', 'layanan'],
-                'tags_list' => ['perpustakaan'],
-                'sdgs' => []
+                'tags_list' => ['perpustakaan']
             ],
             [
                 'title' => 'Workshop Literasi Informasi Mahasiswa Baru 2026',
@@ -129,8 +115,7 @@ class DatabaseSeeder extends Seeder
                 'readability_score' => 'ok',
                 'published_at' => now()->subDays(2),
                 'cats' => ['news-update', 'kegiatan'],
-                'tags_list' => ['literasi', 'mahasiswa'],
-                'sdgs' => ['sdgs-4', 'sdgs-17']
+                'tags_list' => ['literasi', 'mahasiswa']
             ],
             [
                 'title' => 'Mengenal Koleksi Referensi Khusus Papua di Lantai 2',
@@ -141,8 +126,7 @@ class DatabaseSeeder extends Seeder
                 'readability_score' => 'ok',
                 'published_at' => null,
                 'cats' => ['jurusan'],
-                'tags_list' => ['perpustakaan'],
-                'sdgs' => []
+                'tags_list' => ['perpustakaan']
             ],
             [
                 'title' => 'Arsip Berita Cetak Perpustakaan Lama',
@@ -153,8 +137,7 @@ class DatabaseSeeder extends Seeder
                 'readability_score' => 'none',
                 'published_at' => now()->subYears(1),
                 'cats' => ['news-update'],
-                'tags_list' => [],
-                'sdgs' => []
+                'tags_list' => []
             ],
             [
                 'title' => 'Sosialisasi Penjadwalan Kegiatan Dies Natalis',
@@ -165,8 +148,7 @@ class DatabaseSeeder extends Seeder
                 'readability_score' => 'none',
                 'published_at' => now()->addDays(5),
                 'cats' => ['kegiatan'],
-                'tags_list' => ['mahasiswa'],
-                'sdgs' => ['sdgs-17']
+                'tags_list' => ['mahasiswa']
             ]
         ];
 
@@ -202,14 +184,6 @@ class DatabaseSeeder extends Seeder
             }
             $a->tags()->sync($tIds);
 
-            // Sync SDGs
-            $sIds = [];
-            foreach ($art['sdgs'] as $sSlug) {
-                if (isset($sdgsIds[$sSlug])) {
-                    $sIds[] = $sdgsIds[$sSlug];
-                }
-            }
-            $a->sdgsTags()->sync($sIds);
         }
 
         // 3. Create AI Analytics Snapshots
@@ -334,7 +308,11 @@ class DatabaseSeeder extends Seeder
                 'booking_date' => now()->addDays(2)->format('Y-m-d'),
                 'session_time' => '09:00 - 11:00 WIT',
                 'status' => 'approved',
-                'link_surat' => 'https://example.com/surat-ahmad.pdf'
+                'link_surat' => 'https://example.com/surat-ahmad.pdf',
+                'picked_up_at' => null,
+                'returned_at' => null,
+                'notes_inventory' => null,
+                'rejection_reason' => null,
             ],
             [
                 'name' => 'Siti Aminah',
@@ -344,7 +322,11 @@ class DatabaseSeeder extends Seeder
                 'booking_date' => now()->addDays(1)->format('Y-m-d'),
                 'session_time' => '13:00 - 15:00 WIT',
                 'status' => 'pending',
-                'link_surat' => 'https://example.com/surat-siti.pdf'
+                'link_surat' => 'https://example.com/surat-siti.pdf',
+                'picked_up_at' => null,
+                'returned_at' => null,
+                'notes_inventory' => null,
+                'rejection_reason' => null,
             ],
             [
                 'name' => 'Dr. H. Muhammad',
@@ -353,8 +335,40 @@ class DatabaseSeeder extends Seeder
                 'room_name' => 'Ruang Multimedia',
                 'booking_date' => now()->format('Y-m-d'),
                 'session_time' => '10:00 - 12:00 WIT',
-                'status' => 'completed',
-                'link_surat' => null
+                'status' => 'returned',
+                'link_surat' => null,
+                'picked_up_at' => now()->subHours(2),
+                'returned_at' => now()->subMinutes(15),
+                'notes_inventory' => 'Remote AC & kabel HDMI dikembalikan dalam kondisi baik',
+                'rejection_reason' => null,
+            ],
+            [
+                'name' => 'Budi Santoso',
+                'nim_nip' => '202410099',
+                'email' => 'budi.santoso@iainsorong.ac.id',
+                'room_name' => 'Ruang Multimedia',
+                'booking_date' => now()->subDays(1)->format('Y-m-d'),
+                'session_time' => '09:00 - 11:00 WIT',
+                'status' => 'rejected',
+                'link_surat' => null,
+                'picked_up_at' => null,
+                'returned_at' => null,
+                'notes_inventory' => null,
+                'rejection_reason' => 'Ruangan telah dipesan sebelumnya untuk kegiatan internal rektorat.',
+            ],
+            [
+                'name' => 'Rina Wijaya',
+                'nim_nip' => '202410112',
+                'email' => 'rina.wijaya@iainsorong.ac.id',
+                'room_name' => 'Ruang Diskusi Kelompok 1',
+                'booking_date' => now()->format('Y-m-d'),
+                'session_time' => '14:00 - 16:00 WIT',
+                'status' => 'key_picked_up',
+                'link_surat' => null,
+                'picked_up_at' => now()->subMinutes(30),
+                'returned_at' => null,
+                'notes_inventory' => 'Remote AC dan Proyektor dipinjam',
+                'rejection_reason' => null,
             ]
         ];
 
@@ -367,6 +381,10 @@ class DatabaseSeeder extends Seeder
                     'room_name' => $res['room_name'],
                     'status' => $res['status'],
                     'link_surat' => $res['link_surat'],
+                    'picked_up_at' => $res['picked_up_at'],
+                    'returned_at' => $res['returned_at'],
+                    'notes_inventory' => $res['notes_inventory'],
+                    'rejection_reason' => $res['rejection_reason'],
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]

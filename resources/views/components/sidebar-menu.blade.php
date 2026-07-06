@@ -63,7 +63,6 @@
                 $isTambahPos = request()->get('action') === 'create';
                 $isKategori = request()->get('action') === 'categories';
                 $isTag = request()->get('action') === 'tags';
-                $isSdgs = request()->get('action') === 'sdgs';
             @endphp
             <a href="{{ route('admin.articles') }}" 
                class="flex items-center gap-2 py-1.5 px-3 rounded-lg text-xs font-medium relative {{ $isAllPos ? 'text-foreground font-semibold bg-accent' : 'text-muted-foreground hover:text-foreground' }}">
@@ -95,14 +94,6 @@
                     <span class="absolute left-0 top-1/3 bottom-1/3 w-0.5 bg-primary rounded-r"></span>
                 @endif
                 <span>Tag</span>
-            </a>
-
-            <a href="{{ route('admin.articles', ['action' => 'sdgs']) }}" 
-               class="flex items-center gap-2 py-1.5 px-3 rounded-lg text-xs font-medium relative {{ $isSdgs ? 'text-foreground font-semibold bg-accent' : 'text-muted-foreground hover:text-foreground' }}">
-                @if($isSdgs)
-                    <span class="absolute left-0 top-1/3 bottom-1/3 w-0.5 bg-primary rounded-r"></span>
-                @endif
-                <span>SDGs Tag</span>
             </a>
         </div>
     </div>

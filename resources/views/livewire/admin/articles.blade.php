@@ -46,11 +46,54 @@
                                       class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-y min-h-[300px]"></textarea>
                             @error('editContent') <span class="text-xs text-destructive">{{ $message }}</span> @enderror
                         </div>
+
+                        <!-- Excerpt / Ringkasan -->
+                        <div class="space-y-2">
+                            <label for="editExcerpt" class="text-xs font-semibold text-foreground">Ringkasan Berita (Excerpt)</label>
+                            <textarea wire:model="editExcerpt" 
+                                      id="editExcerpt" 
+                                      rows="3" 
+                                      placeholder="Ringkasan pendek berita untuk kartu berita..."
+                                      class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-y"></textarea>
+                            @error('editExcerpt') <span class="text-xs text-destructive">{{ $message }}</span> @enderror
+                        </div>
                     </div>
 
                     <!-- Right Sidebar Settings Column (1 Column) -->
                     <div class="bg-muted/40 border border-border rounded-lg p-5 space-y-5 h-fit">
                         <h3 class="text-xs font-bold text-foreground uppercase tracking-wider border-b border-border pb-2">Atribut & Taksonomi</h3>
+
+                        <!-- Cover Image -->
+                        <div class="space-y-2" x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true" x-on:livewire-upload-finish="isUploading = false" x-on:livewire-upload-error="isUploading = false" x-on:livewire-upload-progress="progress = $event.detail.progress">
+                            <label class="text-xs font-semibold text-muted-foreground block">Gambar Cover Berita</label>
+                            
+                            <!-- Preview -->
+                            @if ($editImage)
+                                <div class="relative w-full aspect-video rounded-lg overflow-hidden border border-border bg-muted mb-2 group">
+                                    @if (is_object($editImage))
+                                        <img src="{{ $editImage->temporaryUrl() }}" class="w-full h-full object-cover">
+                                    @elseif (is_string($editImage))
+                                        <img src="{{ Str::startsWith($editImage, '/') ? $editImage : asset('storage/' . $editImage) }}" class="w-full h-full object-cover">
+                                    @endif
+                                    <button type="button" wire:click="$set('editImage', null)" class="absolute top-2 right-2 bg-destructive text-destructive-foreground p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </button>
+                                </div>
+                            @endif
+
+                            <input type="file" wire:model="editImage" id="editImage" class="hidden" accept="image/*">
+                            <label for="editImage" class="flex items-center justify-center gap-2 w-full px-3 py-2 border border-dashed border-border rounded-lg bg-background text-xs text-muted-foreground hover:text-foreground cursor-pointer hover:border-muted-foreground transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                <span>Pilih Gambar Cover</span>
+                            </label>
+
+                            <!-- Progress Bar -->
+                            <div x-show="isUploading" class="w-full bg-muted rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-primary h-1.5" x-bind:style="'width: ' + progress + '%'"></div>
+                            </div>
+                            
+                            @error('editImage') <span class="text-xs text-destructive">{{ $message }}</span> @enderror
+                        </div>
 
                         <!-- Status -->
                         <div class="space-y-2">

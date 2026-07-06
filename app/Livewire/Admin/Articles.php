@@ -8,10 +8,12 @@ use App\Models\Tag;
 use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 
 class Articles extends Component
 {
     use WithPagination;
+    use WithFileUploads;
 
     // URL Query string parameters
     public $action = ''; // '', 'create', 'categories', 'tags'
@@ -58,6 +60,8 @@ class Articles extends Component
     public $editCategories = [];
     public $editTags = ''; // comma-separated
     public $editPublishedAt = '';
+    public $editImage = null; // can be uploaded file or string path
+    public $editExcerpt = '';
 
     // Taxonomy Manager state
     public $newCategoryName = '';
@@ -264,6 +268,8 @@ class Articles extends Component
             $this->editCategories = $art->categories->pluck('id')->map(fn($id) => (string)$id)->toArray();
             $this->editTags = $art->tags->pluck('name')->join(', ');
             $this->editPublishedAt = $art->published_at ? date('Y-m-d\TH:i', strtotime($art->published_at)) : '';
+            $this->editImage = $art->image;
+            $this->editExcerpt = $art->excerpt;
         } else {
             $this->editingId = null;
             $this->editTitle = '';
@@ -276,6 +282,8 @@ class Articles extends Component
             $this->editCategories = [];
             $this->editTags = '';
             $this->editPublishedAt = '';
+            $this->editImage = null;
+            $this->editExcerpt = '';
         }
     }
 
@@ -294,7 +302,18 @@ class Articles extends Component
             'editTitle' => 'required|string|max:255',
             'editContent' => 'required',
             'editStatus' => 'required|in:draft,published,scheduled,trash',
+            'editImage' => 'nullable|' . (is_object($this->editImage) ? 'image|max:2048' : 'string|max:255'),
+            'editExcerpt' => 'nullable|string',
         ]);
+
+        $imagePath = null;
+        if ($this->editImage) {
+            if (is_object($this->editImage) && method_exists($this->editImage, 'store')) {
+                $imagePath = $this->editImage->store('uploads/berita', 'public');
+            } else {
+                $imagePath = $this->editImage;
+            }
+        }
 
         $slug = $this->editSlug ?: Str::slug($this->editTitle);
 
@@ -305,6 +324,8 @@ class Articles extends Component
                 'title' => $this->editTitle,
                 'slug' => $slug,
                 'content' => $this->editContent,
+                'image' => $imagePath,
+                'excerpt' => $this->editExcerpt,
                 'status' => $this->editStatus,
                 'views_count' => $this->editViewsCount ?: 0,
                 'seo_score' => $this->editSeoScore ?: 'none',

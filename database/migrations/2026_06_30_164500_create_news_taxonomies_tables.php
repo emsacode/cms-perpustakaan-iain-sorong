@@ -19,7 +19,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('title');
+            $table->string('slug')->unique();
             $table->text('content');
+            $table->string('image')->nullable();
+            $table->text('excerpt')->nullable();
             $table->enum('status', ['draft', 'published', 'scheduled', 'trash'])->default('draft');
             $table->integer('views_count')->default(0);
             $table->enum('seo_score', ['bad', 'ok', 'good', 'none'])->default('none');

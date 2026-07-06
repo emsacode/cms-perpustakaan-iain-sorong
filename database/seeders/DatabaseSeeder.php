@@ -72,10 +72,12 @@ class DatabaseSeeder extends Seeder
         }
 
         // 3. Create Dummy Articles
-                $articles = [
+        $articles = [
             [
                 'title' => 'Tips Menghindari Plagiarisme dalam Penulisan Skripsi',
                 'content' => 'Plagiarisme adalah hal fatal dalam dunia akademik. Tulisan ini menjelaskan cara menulis kutipan dan memparafrase kalimat secara legal.',
+                'excerpt' => 'Pelajari cara menulis kutipan dan memparafrase kalimat secara legal untuk menghindari plagiarisme fatal pada skripsi.',
+                'image' => '/images/berita/post-1.jpg',
                 'status' => 'published',
                 'views_count' => 5690,
                 'seo_score' => 'good',
@@ -87,6 +89,8 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Fasilitas Baru Ruang Home Theater UPT Perpustakaan',
                 'content' => 'Perpustakaan kini menghadirkan bioskop mini edukatif untuk mendukung pemutaran film dokumenter ilmiah dan sejarah.',
+                'excerpt' => 'Nikmati bioskop mini edukatif di Perpustakaan IAIN Sorong untuk pemutaran film dokumenter ilmiah dan sejarah.',
+                'image' => '/images/berita/post-2.jpg',
                 'status' => 'published',
                 'views_count' => 3402,
                 'seo_score' => 'good',
@@ -98,6 +102,8 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Jam Layanan Ramadhan 1447 H UPT Perpustakaan IAIN Sorong',
                 'content' => 'Selama bulan suci Ramadhan, layanan operasional perpustakaan disesuaikan mulai pukul 08:30 WIT hingga 15:00 WIT.',
+                'excerpt' => 'Informasi penyesuaian jam layanan operasional UPT Perpustakaan IAIN Sorong selama bulan suci Ramadhan 1447 H.',
+                'image' => '/images/berita/post-3.jpg',
                 'status' => 'published',
                 'views_count' => 1205,
                 'seo_score' => 'ok',
@@ -109,6 +115,8 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Workshop Literasi Informasi Mahasiswa Baru 2026',
                 'content' => 'Kegiatan rutin untuk melatih mahasiswa baru memanfaatkan sistem katalog OPAC, e-resources, dan pangkalan jurnal terindeks.',
+                'excerpt' => 'Pelatihan rutin penggunaan OPAC, e-resources, dan jurnal terindeks bagi mahasiswa baru IAIN Sorong tahun 2026.',
+                'image' => '/images/berita/post-5.jpg',
                 'status' => 'published',
                 'views_count' => 2310,
                 'seo_score' => 'ok',
@@ -120,6 +128,8 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Mengenal Koleksi Referensi Khusus Papua di Lantai 2',
                 'content' => 'Koleksi ini menyimpan arsip sejarah, kebudayaan lokal, kajian antropologi, dan dokumentasi pembangunan Papua Barat.',
+                'excerpt' => 'Kunjungi Lantai 2 untuk mengakses arsip sejarah, kebudayaan lokal, dan kajian antropologi pembangunan Papua.',
+                'image' => '/images/berita/post-6.jpg',
                 'status' => 'draft',
                 'views_count' => 450,
                 'seo_score' => 'none',
@@ -131,6 +141,8 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Arsip Berita Cetak Perpustakaan Lama',
                 'content' => 'Berita-berita lama perpustakaan.',
+                'excerpt' => 'Kumpulan arsip berita cetak dokumentasi sejarah perpustakaan lama.',
+                'image' => '/images/berita/post-7.png',
                 'status' => 'trash',
                 'views_count' => 12,
                 'seo_score' => 'none',
@@ -142,6 +154,8 @@ class DatabaseSeeder extends Seeder
             [
                 'title' => 'Sosialisasi Penjadwalan Kegiatan Dies Natalis',
                 'content' => 'Dies Natalis IAIN Sorong tahun ini akan diselenggarakan dengan meriah.',
+                'excerpt' => 'Persiapan Dies Natalis IAIN Sorong dengan rangkaian sosialisasi kegiatan dan perlombaan bagi mahasiswa.',
+                'image' => '/images/berita/post-8.jpeg',
                 'status' => 'scheduled',
                 'views_count' => 0,
                 'seo_score' => 'ok',
@@ -157,7 +171,10 @@ class DatabaseSeeder extends Seeder
                 ['title' => $art['title']],
                 [
                     'user_id' => $admin->id,
+                    'slug' => \Illuminate\Support\Str::slug($art['title']),
                     'content' => $art['content'],
+                    'excerpt' => $art['excerpt'],
+                    'image' => $art['image'],
                     'status' => $art['status'],
                     'views_count' => $art['views_count'],
                     'seo_score' => $art['seo_score'],

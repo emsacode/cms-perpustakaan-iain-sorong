@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
+use App\Models\Article;
 use App\Models\Epaper;
 use App\Models\Faq;
 use App\Models\Gallery;
@@ -21,13 +21,31 @@ class ContentController extends Controller
      */
     public function posts(Request $request)
     {
-        $query = Post::where('is_published', true);
+        $query = Article::with(['user', 'categories', 'tags'])
+            ->where('status', 'published')
+            ->latest('published_at');
 
         if ($request->filled('category')) {
-            $query->where('category', $request->category);
+            $categorySlug = $request->category;
+            $query->whereHas('categories', function ($q) use ($categorySlug) {
+                $q->where('slug', $categorySlug);
+            });
         }
 
-        return response()->json($query->latest()->paginate(10));
+        if ($request->boolean('all')) {
+            $articles = $query->get()->map(function ($article) {
+                return $this->formatArticle($article);
+            });
+            return response()->json($articles);
+        }
+
+        $paginator = $query->paginate(12);
+
+        $paginator->getCollection()->transform(function ($article) {
+            return $this->formatArticle($article);
+        });
+
+        return response()->json($paginator);
     }
 
     /**
@@ -35,9 +53,56 @@ class ContentController extends Controller
      */
     public function postDetail($slug)
     {
-        $post = Post::where('slug', $slug)->where('is_published', true)->firstOrFail();
+        $article = Article::with(['user', 'categories', 'tags'])
+            ->where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
 
-        return response()->json($post);
+        return response()->json($this->formatArticle($article));
+    }
+
+    /**
+     * Format Article to Astro compatible schema.
+     */
+    private function formatArticle($article)
+    {
+        // Calculate read time: avg 200 words per minute
+        $wordCount = str_word_count(strip_tags($article->content));
+        $readMinutes = max(1, ceil($wordCount / 200));
+        $readTime = $readMinutes . ' menit baca';
+
+        // Author
+        $author = $article->user->name ?? 'Admin Perpustakaan';
+
+        // Category (first related category, or 'Berita' if none)
+        $category = 'Berita';
+        if ($article->categories->isNotEmpty()) {
+            $category = $article->categories->first()->name;
+        }
+
+        // Image
+        $image = $article->image;
+        if ($image) {
+            if (!str_starts_with($image, '/images/') && !str_starts_with($image, 'http')) {
+                $image = asset('storage/' . $image);
+            }
+        } else {
+            $image = '/images/berita/post-1.jpg'; // fallback
+        }
+
+        return [
+            'slug' => $article->slug,
+            'content' => $article->content,
+            'data' => [
+                'title' => $article->title,
+                'description' => $article->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($article->content), 150),
+                'image' => $image,
+                'category' => $category,
+                'author' => $author,
+                'date' => $article->published_at ? \Carbon\Carbon::parse($article->published_at)->format('Y-m-d') : $article->created_at->format('Y-m-d'),
+                'readTime' => $readTime
+            ]
+        ];
     }
 
     /**

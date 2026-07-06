@@ -11,14 +11,20 @@ use App\Livewire\Admin\Clearances;
 use App\Livewire\Admin\Memberships;
 use App\Livewire\Admin\Podcasts;
 use App\Livewire\Admin\Analytics;
+use App\Livewire\Admin\Login;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return redirect('/admin');
 });
 
-// Admin Livewire + Shadcn Routes
-Route::prefix('admin')->group(function () {
+// Guest Routes
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', Login::class)->name('login');
+});
+
+// Admin Livewire + Shadcn Routes (Protected by auth middleware)
+Route::middleware('auth')->prefix('admin')->group(function () {
     Route::get('/', Dashboard::class)->name('admin.dashboard');
     Route::get('/articles', Articles::class)->name('admin.articles');
     Route::get('/users', Users::class)->name('admin.users');
@@ -32,4 +38,11 @@ Route::prefix('admin')->group(function () {
     Route::get('/memberships', Memberships::class)->name('admin.memberships');
     Route::get('/podcasts', Podcasts::class)->name('admin.podcasts');
     Route::get('/analytics', Analytics::class)->name('admin.analytics');
+
+    Route::post('/logout', function () {
+        auth()->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        return redirect()->route('login');
+    })->name('admin.logout');
 });

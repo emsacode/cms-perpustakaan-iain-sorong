@@ -51,7 +51,7 @@
             <span>Pengaturan</span>
         </a>
 
-        <form method="POST" action="#" class="w-full">
+        <form method="POST" action="{{ route('admin.logout') }}" class="w-full">
             @csrf
             <button type="submit" class="flex items-center gap-2 w-full px-2.5 py-1.5 rounded-md hover:bg-destructive/10 text-destructive text-xs text-left">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

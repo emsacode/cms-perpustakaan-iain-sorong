@@ -51,6 +51,7 @@
                                     }
 
                                     const editor = CKEDITOR.replace($refs.editor, {
+                                        versionCheck: false,
                                         filebrowserImageUploadUrl: '/api/v1/editor/upload',
                                         toolbar: [
                                             { name: 'document', items: [ 'Source' ] },

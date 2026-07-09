@@ -51,7 +51,6 @@
                                     }
 
                                     const editor = CKEDITOR.replace($refs.editor, {
-                                        skin: 'office2013,/js/ckeditor/skins/office2013/',
                                         filebrowserImageUploadUrl: '/api/v1/editor/upload',
                                         toolbar: [
                                             { name: 'document', items: [ 'Source' ] },

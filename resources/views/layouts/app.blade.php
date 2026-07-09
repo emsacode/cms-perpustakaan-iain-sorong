@@ -26,6 +26,8 @@
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <!-- Include CKEditor 4 Standard globally -->
+    <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 </head>
 <body class="font-sans antialiased bg-background text-foreground min-h-screen flex">
     

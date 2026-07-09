@@ -228,6 +228,71 @@ class DatabaseSeeder extends Seeder
                 'published_at' => now()->subHours(1),
                 'cats' => ['news-update', 'kegiatan'],
                 'tags_list' => ['skripsi', 'literasi']
+            ],
+            [
+                'title' => 'Pameran Buku Karya Dosen dan Penulis Lokal Papua',
+                'content' => 'UPT Perpustakaan menggelar pameran karya ilmiah, buku biografi, dan antologi sastra yang ditulis langsung oleh civitas akademika IAIN Sorong serta penulis lokal Papua.',
+                'excerpt' => 'Perpustakaan memamerkan karya tulis ilmiah dan buku sastra hasil karya dosen IAIN Sorong dan penulis lokal Papua.',
+                'image' => 'uploads/berita/post-14.jpeg',
+                'status' => 'published',
+                'views_count' => 1450,
+                'seo_score' => 'good',
+                'readability_score' => 'good',
+                'published_at' => now()->subHours(2),
+                'cats' => ['news-update', 'kegiatan'],
+                'tags_list' => ['perpustakaan']
+            ],
+            [
+                'title' => 'Layanan E-Resource Perpustakaan Nasional RI (PNRI) Kini Dapat Diakses Bebas',
+                'content' => 'Seluruh mahasiswa dan dosen IAIN Sorong kini dapat mengakses jutaan koleksi e-resources perpustakaan nasional secara gratis setelah integrasi pendaftaran anggota massal selesai.',
+                'excerpt' => 'Akses gratis ke jutaan jurnal, e-book, dan dokumen ilmiah PNRI bagi civitas akademika IAIN Sorong.',
+                'image' => 'uploads/berita/post-15.jpeg',
+                'status' => 'published',
+                'views_count' => 2890,
+                'seo_score' => 'good',
+                'readability_score' => 'good',
+                'published_at' => now()->subHours(4),
+                'cats' => ['news-update', 'layanan'],
+                'tags_list' => ['literasi', 'mahasiswa']
+            ],
+            [
+                'title' => 'Sosialisasi Turnitin bagi Mahasiswa Tingkat Akhir untuk Uji Kesamaan Skripsi',
+                'content' => 'Perpustakaan menyelenggarakan panduan teknis penggunaan akun Turnitin institusi untuk melakukan pengujian tingkat kemiripan naskah tugas akhir mahasiswa.',
+                'excerpt' => 'Petunjuk teknis pengujian kemiripan naskah skripsi menggunakan akun Turnitin resmi Perpustakaan.',
+                'image' => 'uploads/berita/post-16.png',
+                'status' => 'published',
+                'views_count' => 3560,
+                'seo_score' => 'good',
+                'readability_score' => 'ok',
+                'published_at' => now()->subHours(8),
+                'cats' => ['news-update', 'layanan'],
+                'tags_list' => ['skripsi', 'mahasiswa']
+            ],
+            [
+                'title' => 'Perpustakaan Mengadakan Pemilihan Duta Baca Mahasiswa 2026',
+                'content' => 'Ajang pencarian duta baca perpustakaan untuk mempromosikan gerakan minat baca, literasi informasi, dan kegiatan edukatif di lingkungan kampus.',
+                'excerpt' => 'Ikuti pemilihan Duta Baca Perpustakaan IAIN Sorong tahun 2026 untuk mengkampanyekan gerakan literasi.',
+                'image' => 'uploads/berita/post-17.jpg',
+                'status' => 'published',
+                'views_count' => 1230,
+                'seo_score' => 'ok',
+                'readability_score' => 'good',
+                'published_at' => now()->subHours(18),
+                'cats' => ['news-update', 'kegiatan'],
+                'tags_list' => ['mahasiswa']
+            ],
+            [
+                'title' => 'Optimalisasi Sistem Pencarian Buku Menggunakan SLiMS 9 Bulian',
+                'content' => 'Sistem katalog online (OPAC) perpustakaan kini diperbarui ke versi SLiMS 9 Bulian untuk mempermudah pencarian koleksi fisik dengan akurasi dan kecepatan tinggi.',
+                'excerpt' => 'Pembaruan sistem OPAC ke versi SLiMS 9 Bulian guna mempermudah pencarian koleksi buku perpustakaan.',
+                'image' => 'uploads/berita/post-18.jpg',
+                'status' => 'published',
+                'views_count' => 1980,
+                'seo_score' => 'ok',
+                'readability_score' => 'ok',
+                'published_at' => now()->subDays(2),
+                'cats' => ['news-update', 'layanan'],
+                'tags_list' => ['perpustakaan']
             ]
         ];
 

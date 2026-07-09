@@ -163,6 +163,71 @@ class DatabaseSeeder extends Seeder
                 'published_at' => now()->addDays(5),
                 'cats' => ['kegiatan'],
                 'tags_list' => ['mahasiswa']
+            ],
+            [
+                'title' => 'Kunjungan Studi Banding UPT Perpustakaan IAIN Fattahul Yaqin',
+                'content' => 'Hari ini UPT Perpustakaan IAIN Sorong menerima kunjungan kehormatan dari tim UPT Perpustakaan IAIN Fattahul Yaqin untuk berdiskusi mengenai transformasi digital SLiMS dan penerapan sistem manajemen HONAI.',
+                'excerpt' => 'UPT Perpustakaan IAIN Sorong menerima kunjungan kehormatan dari IAIN Fattahul Yaqin guna membahas transformasi digital.',
+                'image' => 'uploads/berita/post-9.jpeg',
+                'status' => 'published',
+                'views_count' => 1890,
+                'seo_score' => 'good',
+                'readability_score' => 'good',
+                'published_at' => now()->subDays(1),
+                'cats' => ['news-update', 'kegiatan'],
+                'tags_list' => ['perpustakaan']
+            ],
+            [
+                'title' => 'Layanan Pengembalian Buku Mandiri Menggunakan Drop Box',
+                'content' => 'Pemustaka kini dapat mengembalikan buku di luar jam layanan operasional melalui Drop Box mandiri yang disediakan di depan pintu masuk gedung perpustakaan.',
+                'excerpt' => 'Kini pemustaka bisa mengembalikan buku kapan saja lewat kotak Drop Box mandiri di area lobi perpustakaan.',
+                'image' => 'uploads/berita/post-10.jpg',
+                'status' => 'published',
+                'views_count' => 2450,
+                'seo_score' => 'good',
+                'readability_score' => 'ok',
+                'published_at' => now()->subHours(12),
+                'cats' => ['news-update', 'layanan'],
+                'tags_list' => ['mahasiswa', 'perpustakaan']
+            ],
+            [
+                'title' => 'Daftar Buku Terpopuler yang Paling Banyak Dipinjam Semester Ganjil',
+                'content' => 'Berikut adalah rilis berkala daftar 10 judul buku teks bidang metodologi penelitian dan kajian Islam yang paling sering dipinjam oleh pemustaka sepanjang semester ini.',
+                'excerpt' => 'Rilis resmi daftar 10 buku terlaris yang paling banyak dipinjam oleh pemustaka selama semester ganjil.',
+                'image' => 'uploads/berita/post-11.jpeg',
+                'status' => 'published',
+                'views_count' => 3120,
+                'seo_score' => 'ok',
+                'readability_score' => 'good',
+                'published_at' => now()->subHours(6),
+                'cats' => ['news-update', 'layanan'],
+                'tags_list' => ['mahasiswa']
+            ],
+            [
+                'title' => 'Penerimaan Hibah Buku Referensi Sejarah Islam Klasik',
+                'content' => 'UPT Perpustakaan IAIN Sorong menerima hibah 150 eksemplar buku referensi keagamaan dan sejarah Islam klasik dari Kementerian Agama RI.',
+                'excerpt' => 'UPT Perpustakaan menerima hibah 150 buku sejarah Islam klasik dari Kementerian Agama untuk melengkapi koleksi referensi.',
+                'image' => 'uploads/berita/post-12.jpeg',
+                'status' => 'published',
+                'views_count' => 980,
+                'seo_score' => 'ok',
+                'readability_score' => 'ok',
+                'published_at' => now()->subHours(3),
+                'cats' => ['news-update', 'layanan'],
+                'tags_list' => ['perpustakaan']
+            ],
+            [
+                'title' => 'Tips Sukses Mengakses E-Journal Terakreditasi SINTA',
+                'content' => 'Panduan taktis bagi dosen dan mahasiswa tingkat akhir untuk melakukan penelusuran artikel ilmiah secara efektif pada pangkalan data jurnal terindeks SINTA.',
+                'excerpt' => 'Panduan praktis melakukan pencarian artikel ilmiah pada database e-journal nasional terakreditasi SINTA.',
+                'image' => 'uploads/berita/post-13.jpeg',
+                'status' => 'published',
+                'views_count' => 4210,
+                'seo_score' => 'good',
+                'readability_score' => 'good',
+                'published_at' => now()->subHours(1),
+                'cats' => ['news-update', 'kegiatan'],
+                'tags_list' => ['skripsi', 'literasi']
             ]
         ];
 

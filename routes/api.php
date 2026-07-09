@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/pages', [ContentController::class, 'pages']);
         Route::get('/pages/{slug}', [ContentController::class, 'pageDetail']);
         Route::get('/podcasts', [ContentController::class, 'podcasts']);
+        Route::post('/editor/upload', [ContentController::class, 'editorUpload']);
     });
 
     // Transaction & Feedback submissions (throttled to 5 requests/minute)

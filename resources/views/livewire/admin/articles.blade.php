@@ -40,115 +40,59 @@
                         <div class="space-y-2"
                              x-data="{ 
                                 content: @entangle('editContent'),
-                                initQuill() {
-                                    if (typeof Quill === 'undefined') {
-                                        setTimeout(() => this.initQuill(), 100);
+                                initCKEditor() {
+                                    if (typeof CKEDITOR === 'undefined') {
+                                        setTimeout(() => this.initCKEditor(), 100);
                                         return;
                                     }
                                     
-                                    const quill = new Quill($refs.editor, {
-                                        theme: 'snow',
-                                        placeholder: 'Tulis konten berita secara mendalam...',
-                                        modules: {
-                                            toolbar: {
-                                                container: [
-                                                    [{ 'header': [1, 2, 3, false] }],
-                                                    ['bold', 'italic', 'underline', 'strike'],
-                                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                                    ['link', 'blockquote', 'code-block', 'image'],
-                                                    ['clean']
-                                                ]
-                                            }
-                                        }
+                                    if (CKEDITOR.instances['editContentEditor']) {
+                                        CKEDITOR.instances['editContentEditor'].destroy(true);
+                                    }
+
+                                    const editor = CKEDITOR.replace($refs.editor, {
+                                        skin: 'office2013,/js/ckeditor/skins/office2013/',
+                                        filebrowserImageUploadUrl: '/api/v1/editor/upload',
+                                        toolbar: [
+                                            { name: 'document', items: [ 'Source' ] },
+                                            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'Undo', 'Redo' ] },
+                                            { name: 'styles', items: [ 'Format', 'Font', 'FontSize' ] },
+                                            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike', 'RemoveFormat' ] },
+                                            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+                                            { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock' ] },
+                                            { name: 'links', items: [ 'Link', 'Unlink' ] },
+                                            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule' ] },
+                                            { name: 'tools', items: [ 'Maximize' ] }
+                                        ],
+                                        height: 350,
+                                        removePlugins: 'easyimage,cloudservices',
                                     });
-                                    
-                                    // Set initial content
-                                    quill.root.innerHTML = this.content || '';
-                                    
-                                    // Sync changes back to Livewire on text changes
-                                    quill.on('text-change', () => {
-                                        this.content = quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML;
+
+                                    // Set initial value
+                                    editor.setData(this.content || '');
+
+                                    // Sync from Editor to Livewire
+                                    editor.on('change', () => {
+                                        this.content = editor.getData();
                                     });
-                                    
-                                    // Sync changes from Livewire (e.g. when opening another article)
+
+                                    // Watch Livewire state and update editor if out of sync
                                     this.$watch('content', value => {
-                                        if (value !== quill.root.innerHTML) {
-                                            quill.root.innerHTML = value || '';
+                                        if (value !== editor.getData()) {
+                                            editor.setData(value || '');
                                         }
-                                    });
-
-                                    // Intercept image toolbar button click
-                                    quill.getModule('toolbar').addHandler('image', () => {
-                                        const input = document.createElement('input');
-                                        input.setAttribute('type', 'file');
-                                        input.setAttribute('accept', 'image/*');
-                                        input.click();
-                                        
-                                        input.onchange = () => {
-                                            const file = input.files[0];
-                                            if (file) {
-                                                // Trigger Livewire file upload API
-                                                @this.upload('editorUpload', file, (uploadedFilename) => {
-                                                    // Upload succeeded, the updatedEditorUpload hook will trigger on backend
-                                                }, (error) => {
-                                                    console.error('Upload failed:', error);
-                                                });
-                                            }
-                                        };
-                                    });
-
-                                    // Listen for the custom image uploaded event from Laravel
-                                    window.addEventListener('editor-image-uploaded', (event) => {
-                                        const range = quill.getSelection();
-                                        const index = range ? range.index : quill.getLength();
-                                        quill.insertEmbed(index, 'image', event.detail.url);
-                                        quill.setSelection(index + 1);
                                     });
                                 }
                              }"
-                             x-init="initQuill()"
+                             x-init="initCKEditor()"
                              wire:ignore>
-                            <label for="editContent" class="text-xs font-semibold text-foreground">Isi Berita (Rich Text Editor)</label>
+                            <label for="editContent" class="text-xs font-semibold text-foreground">Isi Berita (CKEditor 4)</label>
                             
-                            <!-- Include Quill Assets from CDN -->
-                            <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
-                            <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
-                            
-                            <style>
-                                .ql-toolbar.ql-snow {
-                                    border-color: hsl(var(--border));
-                                    background-color: hsl(var(--muted) / 0.3);
-                                    border-top-left-radius: 0.5rem;
-                                    border-top-right-radius: 0.5rem;
-                                }
-                                .ql-container.ql-snow {
-                                    border-color: hsl(var(--border));
-                                    background-color: hsl(var(--background));
-                                    border-bottom-left-radius: 0.5rem;
-                                    border-bottom-right-radius: 0.5rem;
-                                    min-height: 350px;
-                                    font-size: 0.875rem;
-                                }
-                                .ql-editor {
-                                    min-height: 350px;
-                                }
-                                .ql-editor.ql-blank::before {
-                                    color: hsl(var(--muted-foreground));
-                                    font-style: normal;
-                                }
-                                .ql-snow .ql-stroke {
-                                    stroke: hsl(var(--foreground));
-                                }
-                                .ql-snow .ql-fill {
-                                    fill: hsl(var(--foreground));
-                                }
-                                .ql-snow .ql-picker {
-                                    color: hsl(var(--foreground));
-                                }
-                            </style>
+                            <!-- Include CKEditor 4 Standard from CDN -->
+                            <script src="https://cdn.ckeditor.com/4.22.1/standard/ckeditor.js"></script>
 
-                            <div class="rounded-lg overflow-hidden border border-border focus-within:ring-1 focus-within:ring-ring">
-                                <div x-ref="editor" class="text-foreground"></div>
+                            <div class="rounded-lg overflow-hidden border border-border">
+                                <textarea id="editContentEditor" x-ref="editor" class="text-foreground bg-background"></textarea>
                             </div>
                             @error('editContent') <span class="text-xs text-destructive">{{ $message }}</span> @enderror
                         </div>

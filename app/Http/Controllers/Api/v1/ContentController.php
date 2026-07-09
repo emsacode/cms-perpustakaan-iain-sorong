@@ -278,4 +278,28 @@ class ContentController extends Controller
 
         return response()->json($podcasts);
     }
+
+    /**
+     * Upload an image from CKEditor.
+     */
+    public function editorUpload(Request $request)
+    {
+        if ($request->hasFile('upload')) {
+            $path = $request->file('upload')->store('uploads/berita', 'public');
+            $url = asset('storage/' . $path);
+            
+            return response()->json([
+                'uploaded' => 1,
+                'fileName' => basename($path),
+                'url' => $url
+            ]);
+        }
+        
+        return response()->json([
+            'uploaded' => 0,
+            'error' => [
+                'message' => 'No file uploaded.'
+            ]
+        ], 400);
+    }
 }

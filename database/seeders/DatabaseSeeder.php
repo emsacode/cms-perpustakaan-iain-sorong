@@ -25,6 +25,16 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        User::updateOrCreate(
+            ['email' => 'perpustakaaniainsorong@gmail.com'],
+            [
+                'name' => 'perpustakaan',
+                'password' => bcrypt('Kawanperpus123@'),
+                'role' => 'admin',
+                'status' => 'active'
+            ]
+        );
+
         // Create a dummy editor
         User::updateOrCreate(
             ['email' => 'editor1@iainsorong.ac.id'],

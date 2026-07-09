@@ -25,6 +25,8 @@ Route::prefix('v1')->group(function () {
         // CMS Content Retrieval
         Route::get('/posts', [ContentController::class, 'posts']);
         Route::get('/posts/{slug}', [ContentController::class, 'postDetail']);
+        Route::get('/berita', [ContentController::class, 'posts']);
+        Route::get('/berita/{slug}', [ContentController::class, 'postDetail']);
         Route::get('/epapers', [ContentController::class, 'epapers']);
         Route::get('/newspapers', [ContentController::class, 'newspapers']);
         Route::get('/faqs', [ContentController::class, 'faqs']);

@@ -37,13 +37,119 @@
                                    class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring">
                         </div>
 
-                        <div class="space-y-2">
-                            <label for="editContent" class="text-xs font-semibold text-foreground">Isi Berita (HTML / Rich Text)</label>
-                            <textarea wire:model="editContent" 
-                                      id="editContent" 
-                                      rows="15" 
-                                      placeholder="Tulis konten berita secara mendalam..."
-                                      class="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring resize-y min-h-[300px]"></textarea>
+                        <div class="space-y-2"
+                             x-data="{ 
+                                content: @entangle('editContent'),
+                                initQuill() {
+                                    if (typeof Quill === 'undefined') {
+                                        setTimeout(() => this.initQuill(), 100);
+                                        return;
+                                    }
+                                    
+                                    const quill = new Quill($refs.editor, {
+                                        theme: 'snow',
+                                        placeholder: 'Tulis konten berita secara mendalam...',
+                                        modules: {
+                                            toolbar: {
+                                                container: [
+                                                    [{ 'header': [1, 2, 3, false] }],
+                                                    ['bold', 'italic', 'underline', 'strike'],
+                                                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                    ['link', 'blockquote', 'code-block', 'image'],
+                                                    ['clean']
+                                                ]
+                                            }
+                                        }
+                                    });
+                                    
+                                    // Set initial content
+                                    quill.root.innerHTML = this.content || '';
+                                    
+                                    // Sync changes back to Livewire on text changes
+                                    quill.on('text-change', () => {
+                                        this.content = quill.root.innerHTML === '<p><br></p>' ? '' : quill.root.innerHTML;
+                                    });
+                                    
+                                    // Sync changes from Livewire (e.g. when opening another article)
+                                    this.$watch('content', value => {
+                                        if (value !== quill.root.innerHTML) {
+                                            quill.root.innerHTML = value || '';
+                                        }
+                                    });
+
+                                    // Intercept image toolbar button click
+                                    quill.getModule('toolbar').addHandler('image', () => {
+                                        const input = document.createElement('input');
+                                        input.setAttribute('type', 'file');
+                                        input.setAttribute('accept', 'image/*');
+                                        input.click();
+                                        
+                                        input.onchange = () => {
+                                            const file = input.files[0];
+                                            if (file) {
+                                                // Trigger Livewire file upload API
+                                                @this.upload('editorUpload', file, (uploadedFilename) => {
+                                                    // Upload succeeded, the updatedEditorUpload hook will trigger on backend
+                                                }, (error) => {
+                                                    console.error('Upload failed:', error);
+                                                });
+                                            }
+                                        };
+                                    });
+
+                                    // Listen for the custom image uploaded event from Laravel
+                                    window.addEventListener('editor-image-uploaded', (event) => {
+                                        const range = quill.getSelection();
+                                        const index = range ? range.index : quill.getLength();
+                                        quill.insertEmbed(index, 'image', event.detail.url);
+                                        quill.setSelection(index + 1);
+                                    });
+                                }
+                             }"
+                             x-init="initQuill()"
+                             wire:ignore>
+                            <label for="editContent" class="text-xs font-semibold text-foreground">Isi Berita (Rich Text Editor)</label>
+                            
+                            <!-- Include Quill Assets from CDN -->
+                            <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+                            <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+                            
+                            <style>
+                                .ql-toolbar.ql-snow {
+                                    border-color: hsl(var(--border));
+                                    background-color: hsl(var(--muted) / 0.3);
+                                    border-top-left-radius: 0.5rem;
+                                    border-top-right-radius: 0.5rem;
+                                }
+                                .ql-container.ql-snow {
+                                    border-color: hsl(var(--border));
+                                    background-color: hsl(var(--background));
+                                    border-bottom-left-radius: 0.5rem;
+                                    border-bottom-right-radius: 0.5rem;
+                                    min-height: 350px;
+                                    font-size: 0.875rem;
+                                }
+                                .ql-editor {
+                                    min-height: 350px;
+                                }
+                                .ql-editor.ql-blank::before {
+                                    color: hsl(var(--muted-foreground));
+                                    font-style: normal;
+                                }
+                                .ql-snow .ql-stroke {
+                                    stroke: hsl(var(--foreground));
+                                }
+                                .ql-snow .ql-fill {
+                                    fill: hsl(var(--foreground));
+                                }
+                                .ql-snow .ql-picker {
+                                    color: hsl(var(--foreground));
+                                }
+                            </style>
+
+                            <div class="rounded-lg overflow-hidden border border-border focus-within:ring-1 focus-within:ring-ring">
+                                <div x-ref="editor" class="text-foreground"></div>
+                            </div>
                             @error('editContent') <span class="text-xs text-destructive">{{ $message }}</span> @enderror
                         </div>
 

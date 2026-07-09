@@ -62,6 +62,7 @@ class Articles extends Component
     public $editPublishedAt = '';
     public $editImage = null; // can be uploaded file or string path
     public $editExcerpt = '';
+    public $editorUpload = null;
 
     // Taxonomy Manager state
     public $newCategoryName = '';
@@ -352,6 +353,17 @@ class Articles extends Component
 
         $this->closeEdit();
         session()->flash('message', $this->editingId ? 'Artikel berhasil diperbarui.' : 'Artikel baru berhasil dibuat.');
+    }
+
+    public function updatedEditorUpload()
+    {
+        if ($this->editorUpload) {
+            $path = $this->editorUpload->store('uploads/berita', 'public');
+            $url = asset('storage/' . $path);
+            $this->dispatch('editor-image-uploaded', [
+                'url' => $url
+            ]);
+        }
     }
 
     // Taxonomy Management Methods
